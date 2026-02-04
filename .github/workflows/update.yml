@@ -74,5 +74,22 @@ jobs:
           echo "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
-          git remote add aur ssh://aur@aur.archlinux.org/fsh-sushi-git.git
-          git push aur master
+
+          # Clone the AUR repository to a temporary directory
+          AUR_DIR=$(mktemp -d)
+          git config --global --add safe.directory "$AUR_DIR"
+          git clone ssh://aur@aur.archlinux.org/fsh-sushi-git.git "$AUR_DIR"
+
+          # Copy necessary files to the AUR directory
+          cp PKGBUILD .SRCINFO .gitignore "$AUR_DIR"
+
+          # Commit and push to AUR
+          cd "$AUR_DIR"
+          git add PKGBUILD .SRCINFO .gitignore
+          if git diff --quiet --cached; then
+            echo "No changes to commit to AUR"
+          else
+            pkgver=$(grep -P '^pkgver=' PKGBUILD | cut -d= -f2)
+            git commit -m "Auto-update to $pkgver"
+            git push origin master
+          fi
