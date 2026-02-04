@@ -28,6 +28,12 @@ jobs:
       - name: Fix permissions
         run: chown -R builder:builder .
 
+      - name: Configure Git
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Update PKGBUILD and .SRCINFO
         shell: bash
         run: |
@@ -39,15 +45,18 @@ jobs:
           if git diff --quiet PKGBUILD .SRCINFO; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "changed=true" >> $GITHUB_OUTPUT
+            status=$?
+            if [ $status -eq 1 ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "git diff failed with status $status" >&2
+              exit $status
+            fi
           fi
 
       - name: Commit and push to GitHub
         if: steps.git_check.outputs.changed == 'true'
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git add PKGBUILD .SRCINFO
           git commit -m "Auto-update to $(grep -P '^pkgver=' PKGBUILD | cut -d= -f2)"
           git push
