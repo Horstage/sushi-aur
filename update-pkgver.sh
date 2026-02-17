@@ -1,5 +1,31 @@
 #!/bin/bash
-set -e
+
+# For debugging set TRACE=1
+if [[ ${TRACE-0} == "1" ]]; then
+  set -o xtrace
+fi
+
+# Print help text
+if [[ ${1-} =~ ^-*h(elp)?$ ]]; then
+  echo 'Usage: ./update-pkgver.sh
+
+Updates pkgver in PKGBUILD and .SRCINFO from upstream.
+
+Options:
+  -h, --help    Show this help text'
+  exit
+fi
+
+# Setup
+## Exit, when a command fails
+set -o errexit
+## Exit, when a variable is not set
+set -o nounset
+## Exit, when command in pipeline fails
+set -o pipefail
+
+# Change to the script's directory
+cd "$(dirname "$0")"
 
 # Get latest tag and commit count from upstream
 REPO_URL="https://github.com/FHIR/sushi.git"
