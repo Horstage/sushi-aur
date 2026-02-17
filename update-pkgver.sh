@@ -5,10 +5,11 @@ set -e
 REPO_URL="https://github.com/FHIR/sushi.git"
 
 echo "Fetching latest version from $REPO_URL..."
-# Shallow clone with tags to get the version
-git clone --bare --depth 1 --single-branch --branch master "$REPO_URL" upstream.git
+rm -rf upstream.git
+# Clone with tags to get the version
+git clone --bare --single-branch --branch master "$REPO_URL" upstream.git
 cd upstream.git
-git fetch --tags --depth 1
+git fetch --tags
 new_pkgver=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g')
 cd ..
 rm -rf upstream.git
