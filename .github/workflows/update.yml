@@ -58,7 +58,7 @@ jobs:
         if: steps.git_check.outputs.changed == 'true'
         run: |
           git add PKGBUILD .SRCINFO
-          git commit -m "Auto-update to $(grep -P '^pkgver=' PKGBUILD | cut -d= -f2)"
+          git commit -m ":arrow_up: Auto-update to $(grep -P '^pkgver=' PKGBUILD | cut -d= -f2)"
           git push
 
       - name: Push to AUR
