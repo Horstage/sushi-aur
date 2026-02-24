@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
+    env:
+      HAS_AUR_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY != '' }}
     steps:
       - name: Install dependencies
         run: |
@@ -62,13 +64,13 @@ jobs:
           git push
 
       - name: Setup SSH keys
-        if: steps.git_check.outputs.changed == 'true' && secrets.AUR_SSH_PRIVATE_KEY != ''
+        if: steps.git_check.outputs.changed == 'true' && env.HAS_AUR_KEY == 'true'
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
 
       - name: Push to AUR
-        if: steps.git_check.outputs.changed == 'true' && secrets.AUR_SSH_PRIVATE_KEY != ''
+        if: steps.git_check.outputs.changed == 'true' && env.HAS_AUR_KEY == 'true'
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
