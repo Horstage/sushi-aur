@@ -61,18 +61,16 @@ jobs:
           git commit -m ":arrow_up: Auto-update to $(grep -P '^pkgver=' PKGBUILD | cut -d= -f2)"
           git push
 
+      - name: Setup SSH keys
+        if: steps.git_check.outputs.changed == 'true' && secrets.AUR_SSH_PRIVATE_KEY != ''
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+
       - name: Push to AUR
-        if: steps.git_check.outputs.changed == 'true'
-        env:
-          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        if: steps.git_check.outputs.changed == 'true' && secrets.AUR_SSH_PRIVATE_KEY != ''
         run: |
-          if [ -z "$AUR_SSH_PRIVATE_KEY" ]; then
-            echo "AUR_SSH_PRIVATE_KEY not set, skipping AUR push"
-            exit 0
-          fi
           mkdir -p ~/.ssh
-          echo "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
 
           # Clone the AUR repository to a temporary directory
