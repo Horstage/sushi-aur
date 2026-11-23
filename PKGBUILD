@@ -2,7 +2,7 @@
 
 pkgname=fsh-sushi-git
 _pkgname=sushi
-pkgver=3.21.1.r0.g808ad0e
+pkgver=3.21.1.r2.g9c1bf5c
 pkgrel=1
 pkgdesc="Sushi Unshortens Short Hand Inputs (FSH Compiler)"
 arch=('any')

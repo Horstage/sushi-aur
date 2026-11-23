@@ -1,6 +1,6 @@
 pkgbase = fsh-sushi-git
 	pkgdesc = Sushi Unshortens Short Hand Inputs (FSH Compiler)
-	pkgver = 3.21.1.r0.g808ad0e
+	pkgver = 3.21.1.r2.g9c1bf5c
 	pkgrel = 1
 	url = https://github.com/FHIR/sushi
 	arch = any
@@ -8,8 +8,8 @@ pkgbase = fsh-sushi-git
 	makedepends = npm
 	makedepends = git
 	depends = nodejs
-	provides = fsh-sushi=3.21.1.r0.g808ad0e
-	provides = sushi=3.21.1.r0.g808ad0e
+	provides = fsh-sushi=3.21.1.r2.g9c1bf5c
+	provides = sushi=3.21.1.r2.g9c1bf5c
 	conflicts = fsh-sushi
 	conflicts = sushi
 	source = sushi::git+https://github.com/FHIR/sushi.git
